@@ -104,8 +104,8 @@ if [[ $return_code -eq 0 ]] ; then
 else
     minutes_passed=$((SECONDS / 60))
     printf "\n${CYAN}===>${NOCOLOR} Command ${RED}FAILED${NOCOLOR} after ${try_count} tries (${minutes_passed} minutes)\n"
-    if [[ -z "$email_address" ]] ; then
+    if [[ ! -z "$email_address" ]] ; then
         email_body="The following command:\n\n${command}\n\nwas unsuccessful after ${try_count} tries (${minutes_passed} minutes)"
-        echo $email_body | mutt -s "$(basename "$0") unsuccessful" $email
+        echo $email_body | mutt -s "$(basename "$0") unsuccessful" $email_address
     fi
 fi
