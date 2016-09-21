@@ -1,0 +1,111 @@
+#!/bin/sh
+
+#---------------------------------------------------------------------------------------------------
+# Usage
+#
+usage() {
+  printf "$(basename "$0") -s <TIME_BETWEEN_TRIES> -t <TIME_TO_TRY> -e [EMAIL_ADDRESS] <COMMAND>\n"
+  printf "  required args:\n"
+  printf "    -s TIME_BETWEEN_TRIES  time (minutes) between each try\n"
+  printf "    -t TIME_TO_TRY         total time (minutes) to try the command before giving up\n"
+  printf "       COMMAND             command to try\n"
+  printf "  optional args:\n"
+  printf "    -e EMAIL_ADDRESS       send email to this address when the command never succeeds\n"
+}
+
+#---------------------------------------------------------------------------------------------------
+# Check command-line args
+#
+# Defaults
+time_between_tries=0
+time_to_try=0
+while getopts ':s:t:e:h' option; do
+  case "$option" in
+    s)
+      time_between_tries=$OPTARG
+      ;;
+    t)
+      time_to_try=$OPTARG
+      ;;
+    e)
+      email_address=$OPTARG
+      ;;
+    h)
+      usage
+      exit
+      ;;
+   \?) printf "Invalid option: -%s\n" "$OPTARG" >&2
+       usage >&2
+       exit 1
+       ;;
+  esac
+done
+shift $((OPTIND - 1))
+if [ $time_between_tries -eq 0 ] && [ $time_to_try -eq 0 ] ; then
+    usage ; exit
+fi
+if [[ "$#" -lt 1 ]] ; then
+    usage ; exit
+fi
+
+#---------------------------------------------------------------------------------------------------
+# Get command-line arguments
+#
+command="$@"
+
+#---------------------------------------------------------------------------------------------------
+# Define some colors for printfs
+#
+RED='\e[0;31m'
+GREEN='\e[0;32m'
+YELLOW='\e[0;33m'
+BLUE='\e[0;34m'
+MAGENTA='\e[0;35m'
+CYAN='\e[0;36m'
+WHITE='\e[0;37m'
+BLACK='\e[0;38m'
+BOLDYELLOW='\e[1;33m'
+NOCOLOR='\e[m'
+
+#---------------------------------------------------------------------------------------------------
+# Print what's going to happen
+#
+printf "\n${CYAN}===>${NOCOLOR} Trying the command ${YELLOW}${command}${NOCOLOR} every ${BLUE}${time_between_tries}${NOCOLOR} minutes for ${MAGENTA}${time_to_try}${NOCOLOR} minutes...\n\n"
+
+#---------------------------------------------------------------------------------------------------
+# Try the command
+#
+# Try the command the first time
+eval $command
+# Capture the return code
+return_code=$?
+# Print success or failure
+if [[ $return_code -eq 0 ]] ; then
+    printf "\n${CYAN}===>${NOCOLOR} Command ${GREEN}SUCCEEDED${NOCOLOR} the first time\n"
+    exit 0
+fi
+# Keep trying again if it failed
+try_count=1
+while (( $return_code != 0 )) && (( $SECONDS < $((time_to_try * 60)) )) ; do
+    # Update try count
+    try_count=$(($try_count + 1))
+    # Print failure
+    printf "\n${CYAN}===>${NOCOLOR} Command ${RED}FAILED${NOCOLOR}, trying again in ${time_between_tries} mins...\n\n"
+    # Sleep
+    sleep $((time_between_tries * 60))
+    # Try command
+    eval $command
+    # Capture the return code
+    return_code=$?
+done
+# Print success or failure
+if [[ $return_code -eq 0 ]] ; then
+    printf "\n${CYAN}===>${NOCOLOR} Command ${GREEN}SUCCEEDED${NOCOLOR} after ${try_count} tries\n"
+else
+    minutes_passed=$((SECONDS / 60))
+    printf "\n${CYAN}===>${NOCOLOR} Command ${RED}FAILED${NOCOLOR} after ${try_count} tries (${minutes_passed} minutes)\n"
+    if [[ -z "$email_address" ]] ; then
+        email_body="The following command:\n\n${command}\n\nwas unsuccessful after ${try_count} tries (${minutes_passed} minutes)"
+        echo $email_body | mutt -s "$(basename "$0") unsuccessful" $email
+    fi
+fi
