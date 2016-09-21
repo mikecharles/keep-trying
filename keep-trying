@@ -10,6 +10,7 @@ usage() {
   printf "    -t TIME_TO_TRY         total time (minutes) to try the command before giving up\n"
   printf "       COMMAND             command to try\n"
   printf "  optional args:\n"
+  printf "    -l LOG_FILE            redirect all output to the given log failed\n"
   printf "    -e EMAIL_ADDRESS       send email to this address when the command never succeeds\n"
 }
 
@@ -19,13 +20,16 @@ usage() {
 # Defaults
 time_between_tries=0
 time_to_try=0
-while getopts ':s:t:e:h' option; do
+while getopts ':s:t:e:l:h' option; do
   case "$option" in
     s)
       time_between_tries=$OPTARG
       ;;
     t)
       time_to_try=$OPTARG
+      ;;
+    l)
+      log_file=$OPTARG
       ;;
     e)
       email_address=$OPTARG
@@ -52,6 +56,13 @@ fi
 # Get command-line arguments
 #
 command="$@"
+
+#---------------------------------------------------------------------------------------------------
+# Redirect all output to the specified log file (if the -l option is set)
+#
+if [[ $log_file ]] ; then
+    exec > $log_file 2>&1
+fi
 
 #---------------------------------------------------------------------------------------------------
 # Define some colors for printfs
