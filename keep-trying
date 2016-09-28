@@ -116,12 +116,12 @@ else
     minutes_passed=$((SECONDS / 60))
     printf "\n${CYAN}===>${NOCOLOR} Command ${RED}FAILED${NOCOLOR} after ${try_count} tries (${minutes_passed} minutes)\n"
     if [[ ! -z "$email_address" ]] ; then
-        email_body="The following command:\n\n${command}\n\nwas unsuccessful after ${try_count} tries (${minutes_passed} minutes)"
+        email_body="The following command:\n\n${command}\n\nwas unsuccessful after ${try_count} tries (${minutes_passed} minutes)\n"
         if [[ ! -z "$log_file" ]] ; then
-            echo $email_body | mutt -s "$(basename $0) unsuccessful" $email_address -a "$log_file"
+            echo -e "$email_body" | mutt -s "$(basename $0) unsuccessful" $email_address -a "$log_file"
         else
             email_body="${email_body}\n\nSee log file attached"
-            echo $email_body | mutt -s "$(basename "$0") unsuccessful" $email_address
+            echo -e "$email_body" | mutt -s "$(basename "$0") unsuccessful" $email_address
         fi
     fi
 fi
