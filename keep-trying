@@ -12,6 +12,8 @@ usage() {
   printf "  optional args:\n"
   printf "    -l LOG_FILE            redirect all output to the given log failed\n"
   printf "    -e EMAIL_ADDRESS       send email to this address when the command never succeeds\n"
+  printf "    -c COMMAND_NAME        provide a name for the command keep-trying is running, to\n"
+  printf "                           print in the email subject (default is $(basename "$0"))\n"
 }
 
 #---------------------------------------------------------------------------------------------------
@@ -20,7 +22,8 @@ usage() {
 # Defaults
 time_between_tries=0
 time_to_try=0
-while getopts ':s:t:e:l:h' option; do
+cmd_name=$(basename "$0")
+while getopts ':s:t:e:l:c:h' option; do
   case "$option" in
     s)
       time_between_tries=$OPTARG
@@ -33,6 +36,9 @@ while getopts ':s:t:e:l:h' option; do
       ;;
     e)
       email_address=$OPTARG
+      ;;
+    c)
+      cmd_name=$OPTARG
       ;;
     h)
       usage
@@ -118,10 +124,10 @@ else
     if [[ ! -z "$email_address" ]] ; then
         email_body="The following command:\n\n${command}\n\nwas unsuccessful after ${try_count} tries (${minutes_passed} minutes)\n"
         if [[ ! -z "$log_file" ]] ; then
-            echo -e "$email_body" | mutt -s "$(basename $0) unsuccessful" $email_address -a "$log_file"
+            echo -e "$email_body" | mutt -s "${cmd_name} unsuccessful" $email_address -a "$log_file"
         else
             email_body="${email_body}\n\nSee log file attached"
-            echo -e "$email_body" | mutt -s "$(basename "$0") unsuccessful" $email_address
+            echo -e "$email_body" | mutt -s "${cmd_name} unsuccessful" $email_address
         fi
     fi
 fi

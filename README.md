@@ -31,4 +31,4 @@ Run `~/bin/myscript.sh` every 5 minutes for an hour, including command line opti
 
 Run `~/bin/myscript.sh` every 5 minutes for an hour, including command line options, redirect all output to a log file, and email `email.address@gmail.com` the log file if there was an error:
 
-    $ keep-trying -s 5 -t 60 -e email.address@gmail.com -l ~/myscript.log ~/bin/myscript.sh opt1 opt2
+    $ keep-trying -s 5 -t 60 -e email.address@gmail.com -l ~/myscript.log -c myscript ~/bin/myscript.sh opt1 opt2
