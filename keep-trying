@@ -4,9 +4,9 @@
 # Usage
 #
 usage() {
-  printf "$(basename "$0") -s <TIME_BETWEEN_TRIES> -t <TIME_TO_TRY> -e [EMAIL_ADDRESS] <COMMAND>\n"
+  printf "$(basename "$0") -i <TIME_BETWEEN_TRIES> -t <TIME_TO_TRY> -e [EMAIL_ADDRESS] <COMMAND>\n"
   printf "  required args:\n"
-  printf "    -s TIME_BETWEEN_TRIES  time (minutes) between each try\n"
+  printf "    -i TIME_BETWEEN_TRIES  time (minutes) between each try\n"
   printf "    -t TIME_TO_TRY         total time (minutes) to try the command before giving up\n"
   printf "       COMMAND             command to try\n"
   printf "  optional args:\n"
@@ -20,9 +20,9 @@ usage() {
 # Defaults
 time_between_tries=0
 time_to_try=0
-while getopts ':s:t:e:l:h' option; do
+while getopts ':i:t:e:l:h' option; do
   case "$option" in
-    s)
+    i)
       time_between_tries=$OPTARG
       ;;
     t)
