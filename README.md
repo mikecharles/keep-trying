@@ -23,16 +23,16 @@ Examples
 
 Run `~/bin/myscript.sh` every 5 minutes for an hour
 
-    $ keep-trying -s 5 -t 60 ~/bin/myscript.sh
+    $ keep-trying -i 5 -t 60 ~/bin/myscript.sh
 
 Run `~/bin/myscript.sh` every 5 minutes for an hour, including command line options, and email `email.address@gmail.com` if there was an error:
 
-    $ keep-trying -s 5 -t 60 -e email.address@gmail.com ~/bin/myscript.sh opt1 opt2
+    $ keep-trying -i 5 -t 60 -e email.address@gmail.com ~/bin/myscript.sh opt1 opt2
 
 Run `~/bin/myscript.sh` every 5 minutes for an hour, including command line options, redirect all output to a log file, and email `email.address@gmail.com` the log file if there was an error:
 
-    $ keep-trying -s 5 -t 60 -e email.address@gmail.com -l ~/myscript.log ~/bin/myscript.sh opt1 opt2
+    $ keep-trying -i 5 -t 60 -e email.address@gmail.com -l ~/myscript.log ~/bin/myscript.sh opt1 opt2
 
 Run `~/bin/myscript.sh` every 5 minutes for an hour and email `email.address@gmail.com` a message about the failure, including a custom email subject:
 
-    $ keep-trying -s 5 -t 60 -e email.address@gmail.com -s "Something bad happened..." ~/bin/myscript.sh
+    $ keep-trying -i 5 -t 60 -e email.address@gmail.com -s "Something bad happened..." ~/bin/myscript.sh
