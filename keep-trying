@@ -134,3 +134,6 @@ else
         fi
     fi
 fi
+
+# Return the last return code from the command that was run/attempted
+exit $return_code
