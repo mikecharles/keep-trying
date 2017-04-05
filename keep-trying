@@ -85,7 +85,8 @@ NOCOLOR='\e[m'
 #---------------------------------------------------------------------------------------------------
 # Print what's going to happen
 #
-printf "\n${CYAN}===>${NOCOLOR} Trying the command ${YELLOW}${command}${NOCOLOR} every ${BLUE}${time_between_tries}${NOCOLOR} minutes for ${MAGENTA}${time_to_try}${NOCOLOR} minutes...\n\n"
+printf "\n${CYAN}===>${NOCOLOR} Trying the command ${YELLOW}${command}${NOCOLOR} every \
+${BLUE}${time_between_tries}${NOCOLOR} minutes for ${MAGENTA}${time_to_try}${NOCOLOR} minutes...\n\n"
 
 #---------------------------------------------------------------------------------------------------
 # Try the command
