@@ -128,10 +128,10 @@ else
         fi
         # Set sender email address
         if [[ ! -z "$log_file" ]] ; then
-            echo $email_body | mutt -s "$email_subject" $email_address -a "$log_file"
+            echo -e $email_body | mutt -s "$email_subject" $email_address -a "$log_file"
         else
             email_body="${email_body}\n\nSee log file attached"
-            echo $email_body | mutt -s "$email_subject" $email_address
+            echo -e $email_body | mutt -s "$email_subject" $email_address
         fi
     fi
 fi
