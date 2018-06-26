@@ -11,6 +11,7 @@ usage() {
   printf "       COMMAND             command to try\n"
   printf "  optional args:\n"
   printf "    -l LOG_FILE            redirect all output to the given log failed\n"
+  printf "    -z                     zip the log file before attaching\n"
   printf "    -e EMAIL_ADDRESS       send email to this address when the command never succeeds\n"
   printf "    -s EMAIL_SUBJECT       specify the subject of the email sent if the command never succeeds\n"
 }
@@ -21,7 +22,8 @@ usage() {
 # Defaults
 time_between_tries=0
 time_to_try=0
-while getopts ':i:t:l:e:s:h' option; do
+zip_log=0
+while getopts ':i:t:l:z:e:s:h' option; do
   case "$option" in
     i)
       time_between_tries=$OPTARG
@@ -31,6 +33,9 @@ while getopts ':i:t:l:e:s:h' option; do
       ;;
     l)
       log_file=$OPTARG
+      ;;
+    z)
+      zip_log=1
       ;;
     e)
       email_address=$OPTARG
@@ -128,7 +133,14 @@ else
         fi
         # Set sender email address
         if [[ ! -z "$log_file" ]] ; then
+            if [[ $zip_log -eq 1 ]] ; then
+                zip -rq "${log_file}.zip" $log_file
+                log_file="${log_file}.zip"
+            fi
             echo -e $email_body | mutt -s "$email_subject" $email_address -a "$log_file"
+            if [[ $zip_log -eq 1 ]] ; then
+                rm "$log_file"
+            fi
         else
             email_body="${email_body}\n\nSee log file attached"
             echo -e $email_body | mutt -s "$email_subject" $email_address
