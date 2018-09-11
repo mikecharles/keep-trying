@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+# Source ~/.profile if it exists - had to do this because conda is now defined as a function in
+# $CONDA/etc/profile.d/conda.sh, but Bash functions aren't passed to new bash shells (like this
+# script). So in order to have access to conda, we have to source the ~/.profile here.
+if [ -f "$HOME/.profile" ] ; then
+    . $HOME/.profile
+fi
+
 #---------------------------------------------------------------------------------------------------
 # Usage
 #
