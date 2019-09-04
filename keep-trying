@@ -145,14 +145,12 @@ else
                 zip -rq "${log_file}.zip" $log_file
                 log_file="${log_file}.zip"
             fi
-            #echo -e $email_body | mutt -s "$email_subject" $email_address -a "$log_file"
             echo -e $email_body | mutt -s "$email_subject" -a "$log_file" -- $email_address
             if [[ $zip_log -eq 1 ]] ; then
                 rm "$log_file"
             fi
         else
             email_body="${email_body}\n\nSee log file attached"
-            #echo -e $email_body | mutt -s "$email_subject" $email_address
             echo -e $email_body | mutt -s "$email_subject" -- $email_address
         fi
     fi
